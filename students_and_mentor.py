@@ -16,6 +16,22 @@ class Student:
         else:
             return 'Ошибка'
 
+    def __str__(self):
+        return (f'Имя: {self.name}\nФамилия {self.surname}\n'
+                f'Средняя оценка за домашние задания: {self._gate_average_grade()}\n'
+                f'Курсы в процессе изучения: {', '.join(self.courses_in_progress)}\n'
+                f'Завершенные курсы: {', '.join(self.finished_courses)}')
+
+    def _gate_average_grade(self):
+        for value in self.grades.values():
+            self.grades = round(sum(value) / len(value),1)
+        return self.grades
+
+    def __lt__(self, other):
+        if self.grades < other.grades:
+            print(f'Средний балл {self.grades} < среднего балла {other.grades}')
+        else:
+            print(f'Средний балл {self.grades} > среднего балла {other.grades}')
 
 class Mentor:
     def __init__(self, name, surname):
@@ -28,6 +44,22 @@ class Lecturer(Mentor):
         super().__init__(name, surname)
         self.grades = {}
 
+    def __str__(self):
+        return (f'Имя: {self.name}\nФамилия: {self.surname}\n'
+                f'Средняя оценка за лекции: {self._gate_average_grade()}')
+
+    def _gate_average_grade(self):
+        for value in self.grades.values():
+            self.grades = round(sum(value) / len(value), 1)
+        return self.grades
+
+    def __lt__(self, other):
+        if self.grades < other.grades:
+            print(f'Средний балл {self.grades} < среднего балла {other.grades}')
+        else:
+            print(f'Средний балл {self.grades} > среднего балла {other.grades}')
+
+
 
 class Reviewer(Mentor):
     def rate_hw(self, student, course, grade):
@@ -39,25 +71,54 @@ class Reviewer(Mentor):
         else:
             return 'Ошибка'
 
+    def __str__(self):
+        return f'Имя: {self.name}\nФамилия: {self.surname}'
 
-best_student = Student('Ruoy', 'Eman', 'your_gender')
-best_student.courses_in_progress += ['Python']
-
-cool_mentor = Reviewer('Some', 'Buddy')
-cool_mentor.courses_attached += ['Python']
-
-cool_mentor.rate_hw(best_student, 'Python', 10)
-cool_mentor.rate_hw(best_student, 'Python', 10)
-cool_mentor.rate_hw(best_student, 'Python', 10)
-
-student_1 = Student('Вася', 'Иванов', 'м')
-student_1.courses_in_progress += ['Git']
 
 lecturer_1 = Lecturer('Пётр', 'Петров')
 lecturer_1.courses_attached += ['Git']
 
+some_lecturer = Lecturer('Some', 'Lecturer')
+some_lecturer.courses_attached += ['Git']
+
+student_1 = Student('Вася', 'Иванов', 'м')
+student_1.courses_in_progress += ['Git']
+student_1.finished_courses += ['Введение в программирование']
+student_1.finished_courses += ['Python']
 student_1.rate_lecturer(lecturer_1, 'Git', 8)
 student_1.rate_lecturer(lecturer_1, 'Git', 7)
 
-print(best_student.grades)
-print(lecturer_1.grades)
+some_student = Student('Ruoy', 'Eman', 'м')
+some_student.courses_in_progress += ['Git']
+some_student.courses_in_progress += ['Python']
+some_student.finished_courses += ['Введение в программирование']
+some_student.rate_lecturer(some_lecturer, 'Git', 8)
+some_student.rate_lecturer(some_lecturer, 'Git', 7)
+some_student.rate_lecturer(some_lecturer, 'Git', 10)
+
+some_reviewer = Reviewer('Some', 'Buddy')
+some_reviewer.courses_attached += ['Python']
+some_reviewer.rate_hw(some_student, 'Python', 10)
+some_reviewer.rate_hw(some_student, 'Python', 8)
+some_reviewer.rate_hw(some_student, 'Python', 7)
+some_reviewer.rate_hw(some_student, 'Python', 7)
+
+reviewer_1 = Reviewer('Иван', 'Сидоров')
+reviewer_1.courses_attached += ['Git']
+reviewer_1.rate_hw(student_1, 'Git', 10)
+reviewer_1.rate_hw(student_1, 'Git', 8)
+reviewer_1.rate_hw(student_1, 'Git', 7)
+
+print('Проверяющие:', end='\n\n')
+print(some_reviewer, end='\n\n')
+print(reviewer_1, end='\n\n')
+print('Лекторы:', end='\n\n')
+print(some_lecturer, end='\n\n')
+print(lecturer_1, end='\n\n')
+print('Студенты:', end='\n\n')
+print(some_student, end='\n\n')
+print(student_1, end='\n\n')
+print('Сравнение лекторов:')
+some_lecturer.__lt__(lecturer_1)
+print('Сравнение студентов:')
+some_student.__lt__(student_1)
